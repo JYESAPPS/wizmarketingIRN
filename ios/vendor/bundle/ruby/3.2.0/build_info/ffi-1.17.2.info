@@ -1,0 +1,2 @@
+--with-cflags=-I/opt/homebrew/opt/libffi/include
+--with-ldflags=-L/opt/homebrew/opt/libffi/lib

@@ -256,32 +256,7 @@ async function handleShareToChannel(payload, sendToWeb) {
 
 
 
-/**
- * IAP 최종 결과를 기다린다. 타임아웃 시 실패로 resolve.
- * @param {number} timeoutMs - 기본 120초
- * @returns {Promise<object>} - 위와 동일한 result 객체
- */
-function waitIapResult(timeoutMs = 120000) {
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => {
-      console.log('[IAP][wait] timeout', timeoutMs, 'ms');
-      resolve({
-        success: false,
-        platform: Platform.OS,
-        error_code: 'timeout',
-        message: 'iap_result_timeout',
-      });
-    }, timeoutMs);
-
-    // result가 오면 타임아웃 제거하고 resolve
-    iapWaitersRef.current.push((res) => {
-      clearTimeout(timer);
-      resolve(res);
-    });
-  });
-}
-
-
+/
 // ─────────── IAP SKU (iOS) ───────────
 const IOS_INAPP_BASIC = 'wm_basic_n'; // 단건(Consumable)
 const IOS_SUBS_SKUS = ['wm_standard_m', 'wm_premium_m', 'wm_concierge_m'];
@@ -356,6 +331,35 @@ const App = () => {
     restorePurchases,
     finishTransaction,
   } = useIAP();
+
+
+  /**
+   * IAP 최종 결과를 기다린다.타임아웃 시 실패로 resolve.
+   * @param { number } timeoutMs - 기본 120초
+  * @returns { Promise < object >} - 위와 동일한 result 객체
+  */
+  function waitIapResult(timeoutMs = 120000) {
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        console.log('[IAP][wait] timeout', timeoutMs, 'ms');
+        resolve({
+          success: false,
+          platform: Platform.OS,
+          error_code: 'timeout',
+          message: 'iap_result_timeout',
+        });
+      }, timeoutMs);
+
+      // result가 오면 타임아웃 제거하고 resolve
+      iapWaitersRef.current.push((res) => {
+        clearTimeout(timer);
+        resolve(res);
+      });
+    });
+  }
+
+
+
 
   useEffect(() => {
     let mounted = true;
@@ -556,7 +560,7 @@ const App = () => {
         if (!messaging().isDeviceRegisteredForRemoteMessages) {
           await messaging().registerDeviceForRemoteMessages();
         }
-        try { await notifee.requestPermission(); } catch { }
+        // try { await notifee.requestPermission(); } catch { }
         const fcmToken = await messaging().getToken();
         await logPushTokens('init', fcmToken);
         lastPushTokenRef.current = fcmToken;
@@ -858,7 +862,7 @@ const App = () => {
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     if (!iapError) return;
-    if (!iapBusyRef.current) return;
+    
 
     console.log('[IAP][error.effect]', iapError?.code, String(iapError?.message || iapError), 'kind=', iapKindRef.current, 'sku=', iapSkuRef.current);
 
@@ -929,8 +933,8 @@ const App = () => {
 
         case 'WEB_ERROR': await handleWebError(data.payload); break;
         case 'CHECK_PERMISSION': {
-          const push = await ensureNotificationPermission();
-          replyPermissionStatus({ pushGranted: push });
+          // const push = await ensureNotificationPermission();
+          // replyPermissionStatus({ pushGranted: push });
           break;
         }
         case 'REQUEST_PERMISSION': {
