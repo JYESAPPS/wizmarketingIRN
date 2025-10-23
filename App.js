@@ -193,46 +193,135 @@ const logChunked = (tag, obj, size = 3000) => {
   }
 
   // ─────────── 공유(카카오/인스타 등) ───────────
-  async function handleShareToChannel(payload, sendToWeb) {
-    const key = (payload?.social || '').toUpperCase();
-    const data = payload?.data || {};
-    const social = SOCIAL_MAP[key] ?? SOCIAL_MAP.SYSTEM;
+  // async function handleShareToChannel(payload, sendToWeb) {
+  //   const key = (payload?.social || '').toUpperCase();
+  //   const data = payload?.data || {};
+  //   const social = SOCIAL_MAP[key] ?? SOCIAL_MAP.SYSTEM;
 
-    const text = buildFinalText(data);
-    let file = data.imageUrl || data.url || data.image;
+  //   const text = buildFinalText(data);
+  //   let file = data.imageUrl || data.url || data.image;
 
-    try {
-      const needClipboard = [Share.Social.INSTAGRAM, Share.Social.INSTAGRAM_STORIES, Share.Social.FACEBOOK].includes(social);
-      if (needClipboard && text) { Clipboard.setString(text); sendToWeb('TOAST', { message: '캡션이 복사되었어요. 업로드 화면에서 붙여넣기 하세요.' }); }
+  //   try {
+  //     const needClipboard = [Share.Social.INSTAGRAM, Share.Social.INSTAGRAM_STORIES, Share.Social.FACEBOOK].includes(social);
+  //     if (needClipboard && text) { Clipboard.setString(text); sendToWeb('TOAST', { message: '캡션이 복사되었어요. 업로드 화면에서 붙여넣기 하세요.' }); }
 
-      const ext = guessExt(file) || 'jpg';
-      const mime = extToMime(ext) || 'image/*';
+  //     const ext = guessExt(file) || 'jpg';
+  //     const mime = extToMime(ext) || 'image/*';
 
-      if (key === 'KAKAO') {
-        if (!file) throw new Error('no_image_for_kakao');
-        const kExt = guessExt(file) || 'jpg';
-        const dlPath = `${RNFS.CachesDirectoryPath}/share_${Date.now()}.${kExt}`;
-        const r = await RNFS.downloadFile({ fromUrl: file, toFile: dlPath }).promise;
-        if (!(r && r.statusCode >= 200 && r.statusCode < 300)) throw new Error(`download ${r?.statusCode || 'fail'}`);
-        const st = await RNFS.stat(dlPath);
-        if (!st.isFile() || Number(st.size) <= 0) throw new Error('downloaded-file-empty');
+  //     if (key === 'KAKAO') {
+  //       if (!file) throw new Error('no_image_for_kakao');
+  //       const kExt = guessExt(file) || 'jpg';
+  //       const dlPath = `${RNFS.CachesDirectoryPath}/share_${Date.now()}.${kExt}`;
+  //       const r = await RNFS.downloadFile({ fromUrl: file, toFile: dlPath }).promise;
+  //       if (!(r && r.statusCode >= 200 && r.statusCode < 300)) throw new Error(`download ${r?.statusCode || 'fail'}`);
+  //       const st = await RNFS.stat(dlPath);
+  //       if (!st.isFile() || Number(st.size) <= 0) throw new Error('downloaded-file-empty');
 
-        const fileUrl = `file://${dlPath}`;
-        const kMime = extToMime(kExt) || 'image/*';
+  //       const fileUrl = `file://${dlPath}`;
+  //       const kMime = extToMime(kExt) || 'image/*';
 
-        await Share.open({ title: '카카오톡으로 공유', url: fileUrl, type: kMime, filename: `share.${kExt}`, message: stripImageUrlsFromText(text), failOnCancel: false });
-        try { await RNFS.unlink(dlPath); } catch { }
-        sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
-        return;
-      }
+  //       await Share.open({ title: '카카오톡으로 공유', url: fileUrl, type: kMime, filename: `share.${kExt}`, message: stripImageUrlsFromText(text), failOnCancel: false });
+  //       try { await RNFS.unlink(dlPath); } catch { }
+  //       sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
+  //       return;
+  //     }
 
-      if (social === Share.Social.INSTAGRAM_STORIES) {
-        const { uri, cleanup } = await ensureLocalPng(file);
+  //     if (social === Share.Social.INSTAGRAM_STORIES) {
+  //       const { uri, cleanup } = await ensureLocalPng(file);
+  //       try {
+  //         await Share.shareSingle({
+  //           social: Share.Social.INSTAGRAM_STORIES,
+  //           backgroundImage: uri,
+  //           attributionURL: data.link,
+  //           backgroundTopColor: '#000000',
+  //           backgroundBottomColor: '#000000',
+  //           type: 'image/png',
+  //           filename: 'share.png',
+  //           failOnCancel: false,
+  //         });
+  //       } catch {
+  //         await Share.open({ url: uri, type: 'image/png', filename: 'share.png', failOnCancel: false });
+  //       } finally { await cleanup(); }
+  //       sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
+  //       return;
+  //     }
+
+  //     if (typeof social === 'string' && !['SYSTEM', 'KAKAO', 'NAVER'].includes(social)) {
+  //       await Share.shareSingle({ social, url: file, message: needClipboard ? undefined : text, type: mime, filename: `share.${ext}`, failOnCancel: false });
+  //       sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
+  //       return;
+  //     }
+
+  //     await Share.open({ url: file, message: text, title: '공유', type: mime, filename: `share.${ext}`, failOnCancel: false });
+  //     sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
+  //   } catch (err) {
+  //     sendToWeb('SHARE_RESULT', { success: false, platform: key, error_code: 'share_failed', message: String(err?.message || err) });
+  //   }
+  // }
+
+
+async function handleShareToChannel(payload, sendToWeb) {
+  const key = (payload?.social || '').toUpperCase();
+  const data = payload?.data || {};
+  const social = SOCIAL_MAP[key] ?? SOCIAL_MAP.SYSTEM;
+
+  const text = buildFinalText(data);
+  let file = data.imageUrl || data.url || data.image;
+
+  // iOS 판별
+  const isIOS = Platform.OS === 'ios';
+
+  try {
+    // 1) (인스타/페북 등) 정책상 캡션 프리필 불가 → 클립보드 안내
+    const needClipboard = [
+      Share.Social.INSTAGRAM,
+      Share.Social.INSTAGRAM_STORIES,
+      Share.Social.FACEBOOK,
+    ].includes(social);
+    if (needClipboard && text) {
+      Clipboard.setString(text);
+      sendToWeb?.('TOAST', { message: '캡션이 복사되었어요. 업로드 화면에서 붙여넣기 하세요.' });
+    }
+
+    // 2) Kakao 전용 처리 (파일 로컬화 + 메시지에서 이미지 URL 제거)
+    if (key === 'KAKAO') {
+      if (!file) throw new Error('no_image_for_kakao');
+      const kExt = guessExt(file) || 'jpg';
+      const dlPath = `${RNFS.CachesDirectoryPath}/share_${Date.now()}.${kExt}`;
+      const r = await RNFS.downloadFile({ fromUrl: file, toFile: dlPath }).promise;
+      if (!(r && r.statusCode >= 200 && r.statusCode < 300)) throw new Error(`download ${r?.statusCode || 'fail'}`);
+
+      const st = await RNFS.stat(dlPath);
+      if (!st.isFile() || Number(st.size) <= 0) throw new Error('downloaded-file-empty');
+
+      const fileUrl = `file://${dlPath}`;
+      const kMime = extToMime(kExt) || 'image/*';
+
+      await Share.open({
+        title: '카카오톡으로 공유',
+        url: fileUrl,
+        type: kMime,
+        filename: `share.${kExt}`,
+        message: stripImageUrlsFromText(text),
+        failOnCancel: false,
+      });
+
+      try { await RNFS.unlink(dlPath); } catch { }
+
+      sendToWeb?.('SHARE_RESULT', { success: true, platform: key, post_id: null });
+      return;
+    }
+
+    // 3) Instagram Stories (iOS/Android 공통) — PNG 선호 + 폴백
+    if (social === Share.Social.INSTAGRAM_STORIES) {
+      if (!file) throw new Error('no_image_source');
+      const { uri, cleanup } = await ensureLocalPng(file);
+      try {
         try {
           await Share.shareSingle({
             social: Share.Social.INSTAGRAM_STORIES,
             backgroundImage: uri,
-            attributionURL: data.link,
+            attributionURL: data.link, // 무시될 수 있음
             backgroundTopColor: '#000000',
             backgroundBottomColor: '#000000',
             type: 'image/png',
@@ -240,25 +329,97 @@ const logChunked = (tag, obj, size = 3000) => {
             failOnCancel: false,
           });
         } catch {
-          await Share.open({ url: uri, type: 'image/png', filename: 'share.png', failOnCancel: false });
-        } finally { await cleanup(); }
-        sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
-        return;
+          await Share.open({
+            url: uri,
+            type: 'image/png',
+            filename: 'share.png',
+            failOnCancel: false,
+          });
+        }
+        sendToWeb?.('SHARE_RESULT', { success: true, platform: key, post_id: null });
+      } finally {
+        try { await cleanup(); } catch { }
       }
-
-      if (typeof social === 'string' && !['SYSTEM', 'KAKAO', 'NAVER'].includes(social)) {
-        await Share.shareSingle({ social, url: file, message: needClipboard ? undefined : text, type: mime, filename: `share.${ext}`, failOnCancel: false });
-        sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
-        return;
-      }
-
-      await Share.open({ url: file, message: text, title: '공유', type: mime, filename: `share.${ext}`, failOnCancel: false });
-      sendToWeb('SHARE_RESULT', { success: true, platform: key, post_id: null });
-    } catch (err) {
-      sendToWeb('SHARE_RESULT', { success: false, platform: key, error_code: 'share_failed', message: String(err?.message || err) });
+      return;
     }
-  }
 
+    // 4) Instagram Feed — iOS에서는 시스템 공유 시트 권장(직행 제한/불안정)
+    if (social === Share.Social.INSTAGRAM && isIOS) {
+      if (!file) throw new Error('no_image_source');
+      const ext = guessExt(file) || 'jpg';
+      const mime = extToMime(ext) || 'image/jpeg';
+      const { uri, cleanup } = await ensureLocalFile(file, ext); // 로컬 파일 보장
+      try {
+        await Share.open({
+          url: uri,
+          type: mime,
+          filename: `share.${ext}`,
+          // iOS Instagram은 메시지 프리필 불가 → 클립보드 안내만 유지
+          failOnCancel: false,
+        });
+        sendToWeb?.('SHARE_RESULT', { success: true, platform: key, method: 'system_sheet', post_id: null });
+      } finally {
+        try { await cleanup(); } catch { }
+      }
+      return;
+    }
+
+    // 5) 그 외 특정 소셜들(페북 등) — shareSingle 사용
+    //    (단, iOS에서 메시지 프리필 불가한 플랫폼은 Clipboard만)
+    if (typeof social === 'string' && !['SYSTEM', 'KAKAO', 'NAVER'].includes(social)) {
+      if (!file) throw new Error('no_image_source');
+      const ext = guessExt(file) || 'jpg';
+      const mime = extToMime(ext) || 'image/*';
+
+      // 가능한 한 로컬 파일을 보장해서 실패 확률을 낮춤
+      const { uri, cleanup } = await ensureLocalFile(file, ext);
+      try {
+        await Share.shareSingle({
+          social,
+          url: uri,
+          type: mime,
+          filename: `share.${ext}`,
+          message: needClipboard ? undefined : text,
+          failOnCancel: false,
+        });
+        sendToWeb?.('SHARE_RESULT', { success: true, platform: key, post_id: null });
+      } finally {
+        try { await cleanup(); } catch { }
+      }
+      return;
+    }
+
+    // 6) 시스템 공유 (기본 폴백) — iOS/Android 공통
+    {
+      if (!file) throw new Error('no_image_source');
+      const ext = guessExt(file) || 'jpg';
+      const mime = extToMime(ext) || 'image/*';
+
+      // 시스템 공유도 로컬 파일이면 성공률이 높음
+      const { uri, cleanup } = await ensureLocalFile(file, ext);
+      try {
+        await Share.open({
+          url: uri,
+          message: text,
+          title: '공유',
+          type: mime,
+          filename: `share.${ext}`,
+          failOnCancel: false,
+        });
+        sendToWeb?.('SHARE_RESULT', { success: true, platform: key, post_id: null });
+      } finally {
+        try { await cleanup(); } catch { }
+      }
+    }
+  } catch (err) {
+    sendToWeb?.('SHARE_RESULT', {
+      success: false,
+      platform: key,
+      error_code: 'share_failed',
+      message: String(err?.message || err),
+    });
+  }
+}
 
   // ─────────── IAP SKU (iOS) ───────────
   const IOS_INAPP_BASIC = 'wm_basic_n'; // 단건(Consumable)
