@@ -38,6 +38,29 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
+const IG_SCHEME = 'instagram://';
+const IG_STORIES_SCHEME = 'instagram-stories://share';
+const IG_IOS_STORE = 'itms-apps://itunes.apple.com/app/id389801252';
+const IG_ANDROID_STORE = 'market://details?id=com.instagram.android';
+const IG_ANDROID_HTTP = 'https://play.google.com/store/apps/details?id=com.instagram.android';
+
+async function ensureInstagramInstalled({ stories = false } = {}) {
+  const scheme = stories ? IG_STORIES_SCHEME : IG_SCHEME;
+  try {
+    const ok = await Linking.canOpenURL(scheme);
+    if (ok) return true;
+  } catch { }
+  // not installed → open store
+  try {
+    await Linking.openURL(Platform.OS === 'ios' ? IG_IOS_STORE : IG_ANDROID_STORE);
+  } catch {
+    if (Platform.OS === 'android') await Linking.openURL(IG_ANDROID_HTTP);
+  }
+  return false;
+}
+
 // ─────────── 설치 ID (installation_id) 유틸 ───────────
 function makeRandomId() {
   return 'wiz-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
@@ -314,6 +337,11 @@ async function handleShareToChannel(payload, sendToWeb) {
 
     // 3) Instagram Stories (iOS/Android 공통) — PNG 선호 + 폴백
     if (social === Share.Social.INSTAGRAM_STORIES) {
+
+
+      const installed = await ensureInstagramInstalled({ stories: true });
+      if (!installed) return; // 스토어로 보냈으니 종료
+
       if (!file) throw new Error('no_image_source');
       const { uri, cleanup } = await ensureLocalPng(file);
       try {
@@ -345,6 +373,10 @@ async function handleShareToChannel(payload, sendToWeb) {
 
     // 4) Instagram Feed — iOS에서는 시스템 공유 시트 권장(직행 제한/불안정)
     if (social === Share.Social.INSTAGRAM && isIOS) {
+
+      const installed = await ensureInstagramInstalled({ stories: true });
+      if (!installed) return; // 스토어로 보냈으니 종료
+      
       if (!file) throw new Error('no_image_source');
       const ext = guessExt(file) || 'jpg';
       const mime = extToMime(ext) || 'image/jpeg';
