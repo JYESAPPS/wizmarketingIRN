@@ -1,10 +1,10 @@
-// App.js — WizMarketing WebView Bridge (iOS 전용 IAP 안정화 반영)
-// - 변경 핵심: iOS IAP 레이스/고착 방지
-//   1) beginIap/endIap 실제 구현(중복 방지 락)
-//   2) finishedTxnIdsRef(Set)로 finishTransaction 중복 방지
-//   3) 폴링이 스냅샷 발견 시 즉시 restorePurchases() 호출, 최종 성공은 latestPurchase에서만 송신
-//   4) waitIapResult 타임아웃 12s → 30s 상향
-//   5) 로깅 태그 정리
+// App.js — WizMarketing WebView Bridge (iOS 전용 IAP 안정화 • currentPurchase 적용 · race 타임아웃 처리 · 락 해제 보장)
+// - 핵심 변경점 요약
+//   1) useIAP: latestPurchase/error → currentPurchase/currentPurchaseError 로 교체(v14 표준)
+//   2) 폴링이 스냅샷을 먼저 잡아도 최종 성공은 currentPurchase 이펙트(=finishTransaction 완료 시점)에서만 송신
+//   3) Promise.race 결과가 타임아웃/실패면 즉시 실패 송신 + notify + endIap()로 락 해제
+//   4) beginIap/endIap 실제 구현(중복 방지), finishedTxnIdsRef(Set)로 finish 중복 방지
+//   5) waitIapResult 30s 상향
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import firebase from '@react-native-firebase/app';
@@ -26,14 +26,13 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SplashScreenRN from './SplashScreenRN';
 
-// ★ v14 표준: useIAP 훅 기반
+// v14 표준 훅
 import { getAvailablePurchases, useIAP } from 'react-native-iap';
 
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import SHA256 from 'crypto-js/sha256';
 import { randomBytes } from 'react-native-randombytes';
 
-// iOS용 카카오 로그인 라이브러리(안드로이드는 별도 프로젝트)
 import {
   login as kakaoLoginIOS,
   getProfile as kakaoGetProfileIOS,
@@ -63,7 +62,7 @@ async function ensureInstagramInstalled({ stories = false } = {}) {
   return false;
 }
 
-// ─────────── 설치 ID (installation_id) 유틸 ───────────
+// ─────────── 설치 ID ───────────
 function makeRandomId() {
   return 'wiz-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 }
@@ -92,19 +91,17 @@ const randomNonce = (n = 32) => {
   }
 };
 
-const { KakaoLoginModule } = NativeModules; // Android 전용 커스텀 모듈(이번 iOS만 사용하므로 영향 없음)
+const { KakaoLoginModule } = NativeModules;
 const kakaoAndroid = (Platform.OS === 'android' && KakaoLoginModule && typeof KakaoLoginModule === 'object') ? KakaoLoginModule : null;
 
 const APP_VERSION = '1.0.0';
 const BOOT_TIMEOUT_MS = 8000;
 const MIN_SPLASH_MS = 1200;
-const TAG = '[WizApp]';
 const NAVER_AUTH_URL = 'https://nid.naver.com/oauth2.0/authorize';
 const NAVER_CLIENT_ID = 'YSd2iMy0gj8Da9MZ4Unf';
 
-// ===== IAP 로그 헬퍼 =====
-const IAP_TAG = '[IAP]';
-const logIap = (...a) => { try { console.log(IAP_TAG, ...a); } catch { } };
+// IAP 로그
+const logIap = (...a) => { try { console.log('[IAP]', ...a); } catch { } };
 
 // Google Sign-In
 GoogleSignin.configure({
@@ -144,7 +141,6 @@ function buildFinalText({ caption, hashtags = [], couponEnabled = false, link } 
   return `${caption || ''}${tags ? `\n\n${tags}` : ''}${couponEnabled ? `\n\n✅ 민생회복소비쿠폰` : ''}${link ? `\n${link}` : ''}`.trim();
 }
 
-function downloadTo(fromUrl, toFile) { return RNFS.downloadFile({ fromUrl, toFile }).promise; }
 function guessExt(u = '') { u = u.toLowerCase(); if (u.includes('.png')) return 'png'; if (u.includes('.webp')) return 'webp'; if (u.includes('.gif')) return 'gif'; return 'jpg'; }
 function extToMime(e) { return e === 'png' ? 'image/png' : e === 'webp' ? 'image/webp' : 'image/jpeg'; }
 
@@ -365,11 +361,10 @@ async function openManageSubscriptionIOS() {
 }
 
 const App = () => {
-  // 대기 중인 resolve 콜백들을 담아둘 큐
-  const iapWaitersRef = useRef([]); // Array<(res: any) => void>
+  const iapWaitersRef = useRef([]); // Array<(res:any)=>void>
   const webViewRef = useRef(null);
 
-  // === IAP 전용 송신기 (웹 준비 전 큐잉 → 준비되면 flush) ===
+  // 웹 준비 전 큐잉
   const webIapReadyRef = useRef(false);
   const webIapQueueRef = useRef([]); // string[]
   const sendIapToWeb = useCallback((type, payload = {}) => {
@@ -396,26 +391,15 @@ const App = () => {
   const lastPushTokenRef = useRef('');
   const lastNavStateRef = useRef({});
 
-  const isUserCancel = (e) => {
-    const msg = String(e?.message || e || '').toLowerCase();
-    const code = String(e?.code || '').toLowerCase();
-    return (
-      code.includes('cancel') ||
-      code === 'e_cancelled_operation' ||
-      code === 'canceled' || code === 'cancelled' ||
-      msg.includes('cancel') || msg.includes('취소')
-    );
-  };
-
   const [installId, setInstallId] = useState(null);
 
-  // === IAP Hook (v14) ===
+  // v14 훅: currentPurchase / currentPurchaseError
   const {
     connected,
     products,
     subscriptions,
-    latestPurchase,
-    error: iapError,
+    currentPurchase,
+    currentPurchaseError,
     isLoading,
     fetchProducts,
     requestPurchase,
@@ -423,12 +407,11 @@ const App = () => {
     finishTransaction,
   } = useIAP();
 
-  // === 보강: 이미 finish한 트랜잭션 중복 방지용 Set
+  // finish 중복 방지
   const finishedTxnIdsRef = useRef(new Set());
 
-  // === 헬퍼 ===
+  // 스냅샷 유틸
   const pickKey = (x) => Number(x?.expirationDateIOS || x?.transactionDate || 0);
-
   async function probeLatestBySnapshot(targetSku) {
     try {
       const arr = await getAvailablePurchases();
@@ -451,18 +434,9 @@ const App = () => {
     return new Promise((resolve) => {
       const timer = setTimeout(() => {
         console.log('[IAP][wait] timeout', timeoutMs, 'ms');
-        resolve({
-          success: false,
-          platform: Platform.OS,
-          error_code: 'timeout',
-          message: 'iap_result_timeout',
-        });
+        resolve({ success: false, platform: Platform.OS, error_code: 'timeout', message: 'iap_result_timeout' });
       }, timeoutMs);
-
-      iapWaitersRef.current.push((res) => {
-        clearTimeout(timer);
-        resolve(res);
-      });
+      iapWaitersRef.current.push((res) => { clearTimeout(timer); resolve(res); });
     });
   }
 
@@ -475,9 +449,6 @@ const App = () => {
     return () => { mounted = false; };
   }, []);
 
-  /**
-   * 결과를 모든 대기자에게 전달해 해제해준다.
-   */
   const notifyIapResult = useCallback((result) => {
     try {
       console.log('[IAP][notify]', result?.success ? 'success' : 'fail', result);
@@ -497,24 +468,24 @@ const App = () => {
     } catch (e) { console.log('❌ postMessage error:', e); }
   }, []);
 
-  // ===== IAP 스냅샷 로그 =====
+  // 스냅샷 로그
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     console.log('[IAP][snapshot] connected=', connected, 'isLoading=', isLoading);
-    if (latestPurchase) {
-      try { console.log('[IAP][snapshot.latest]', JSON.stringify({ productId: latestPurchase.productId, transactionId: latestPurchase.transactionId, transactionDate: latestPurchase.transactionDate }, null, 2)); }
-      catch { console.log('[IAP][snapshot.latest]<unserializable>'); }
+    if (currentPurchase) {
+      try { console.log('[IAP][snapshot.current]', JSON.stringify({ productId: currentPurchase.productId, transactionId: currentPurchase.transactionId, transactionDate: currentPurchase.transactionDate }, null, 2)); }
+      catch { console.log('[IAP][snapshot.current]<unserializable>'); }
     } else {
-      console.log('[IAP][snapshot.latest]<null>');
+      console.log('[IAP][snapshot.current]<null>');
     }
-    if (iapError) {
-      console.log('[IAP][snapshot.error]', iapError?.code, String(iapError?.message || iapError));
+    if (currentPurchaseError) {
+      console.log('[IAP][snapshot.error]', currentPurchaseError?.code, String(currentPurchaseError?.message || currentPurchaseError));
     } else {
       console.log('[IAP][snapshot.error]<null>');
     }
-  }, [connected, isLoading, latestPurchase, iapError]);
+  }, [connected, isLoading, currentPurchase, currentPurchaseError]);
 
-  // ─────────── IAP 진행 락(중복 실행 방지) + 진행 정보 ───────────
+  // 진행 락
   const iapBusyRef = useRef(false);
   const iapKindRef = useRef(null); // 'inapp' | 'subs'
   const iapSkuRef = useRef(null);
@@ -612,11 +583,11 @@ const App = () => {
       typeof sub.expirationDateIOS === 'number' &&
       sub.expirationDateIOS > Date.now();
 
-    const lp = latestPurchase
+    const cp = currentPurchase
       ? {
-        productId: latestPurchase.productId,
-        transactionId: latestPurchase.transactionId,
-        transactionDate: latestPurchase.transactionDate,
+        productId: currentPurchase.productId,
+        transactionId: currentPurchase.transactionId,
+        transactionDate: currentPurchase.transactionDate,
       }
       : null;
 
@@ -637,15 +608,15 @@ const App = () => {
           active: subActive,
         }
         : null,
-      latest_purchase: lp,
-      last_error: iapError
-        ? { code: iapError.code || 'unknown', message: String(iapError.message || iapError) }
+      latest_purchase: cp,
+      last_error: currentPurchaseError
+        ? { code: currentPurchaseError.code || 'unknown', message: String(currentPurchaseError.message || currentPurchaseError) }
         : null,
       ts: Date.now(),
     };
-  }, [connected, isLoading, latestPurchase, iapError]);
+  }, [connected, isLoading, currentPurchase, currentPurchaseError]);
 
-  // Push: token + foreground
+  // Push
   useEffect(() => {
     (async () => {
       try {
@@ -656,13 +627,7 @@ const App = () => {
         const fcmToken = await messaging().getToken();
         await logPushTokens('init', fcmToken);
         lastPushTokenRef.current = fcmToken;
-        sendToWeb('PUSH_TOKEN', {
-          token: fcmToken,
-          platform: Platform.OS,
-          app_version: APP_VERSION,
-          install_id: installId ?? 'unknown',
-          ts: Date.now(),
-        });
+        sendToWeb('PUSH_TOKEN', { token: fcmToken, platform: Platform.OS, app_version: APP_VERSION, install_id: installId ?? 'unknown', ts: Date.now() });
         const unsubRefresh = messaging().onTokenRefresh((t) => {
           lastPushTokenRef.current = t;
           sendToWeb('PUSH_TOKEN', { token: t, platform: Platform.OS, app_version: APP_VERSION, install_id: installId ?? 'unknown', ts: Date.now() });
@@ -750,37 +715,11 @@ const App = () => {
           safeSend('SIGNIN_RESULT', { success: false, provider: 'kakao', error_code: 'not_supported', error_message: 'Kakao native module missing on Android' });
           return;
         }
-        try {
-          if (kakaoAndroid.getKeyHash) { const keyHash = await kakaoAndroid.getKeyHash(); console.log('[KAKAO][ANDROID] keyHash =', keyHash); }
-          let res;
-          if (typeof kakaoAndroid.loginWithKakaoTalk === 'function') res = await kakaoAndroid.loginWithKakaoTalk();
-          else if (typeof kakaoAndroid.login === 'function') res = await kakaoAndroid.login();
-          else throw new Error('kakao_module_missing_methods');
-          safeSend('SIGNIN_RESULT', {
-            success: true, provider: 'kakao',
-            user: { provider_id: String(res.id), email: res.email || '', displayName: res.nickname || '', photoURL: res.photoURL || '' },
-            tokens: { access_token: res.accessToken, refresh_token: res.refreshToken || '' },
-            expires_at: Date.now() + 6 * 3600 * 1000,
-          });
-          return;
-        } catch (err) {
-          console.log('[KAKAO LOGIN ERROR][ANDROID]', err);
-          safeSend('SIGNIN_RESULT', { success: false, provider: 'kakao', error_code: err?.code || 'kakao_error', error_message: err?.message || String(err) });
-          return;
-        }
       }
       if (provider === 'naver') {
         const { redirectUri, state } = payload || {};
         if (!redirectUri || !state) throw new Error('invalid_payload');
-        const ensureSlash = (u) => (u.endsWith('/') ? u : u + '/');
-        const ru = ensureSlash(redirectUri);
-        const authUrl =
-          `${NAVER_AUTH_URL}?response_type=code` +
-          `&client_id=${encodeURIComponent(NAVER_CLIENT_ID)}` +
-          `&redirect_uri=${encodeURIComponent(ru)}` +
-          `&state=${encodeURIComponent(state)}`;
-        const js = `location.href='${authUrl.replace(/'/g, "\\'")}'; true;`;
-        console.log('[NAVER] authorize URL inject');
+        const js = `window.location.assign(${JSON.stringify(`${NAVER_AUTH_URL}?response_type=code&client_id=${encodeURIComponent(NAVER_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri.endsWith('/') ? redirectUri : redirectUri + '/')}&state=${encodeURIComponent(state)}`)}); true;`;
         webViewRef.current?.injectJavaScript(js);
         safeSend('NAVER_LOGIN_STARTED', { at: Date.now() });
         return;
@@ -837,16 +776,12 @@ const App = () => {
     catch (err) { sendToWeb('SIGNOUT_RESULT', { success: false, error_code: 'signout_error', message: String(err?.message || err) }); }
   }, [sendToWeb]);
 
-  const handleCheckPermission = useCallback(async () => {
-    // (옵션) 필요 시 구현
-  }, []);
-
   const handleRequestPermission = useCallback(async () => {
     const push = await ensureNotificationPermission();
     replyPermissionStatus({ pushGranted: push });
   }, [replyPermissionStatus, ensureNotificationPermission]);
 
-  // === IAP 초기 프리페치 (iOS 권장)
+  // IAP 프리페치(iOS)
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     if (!connected) return;
@@ -861,17 +796,14 @@ const App = () => {
     })();
   }, [connected]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // === latestPurchase 처리 (finishTransaction 포함 + 웹 통지 + 대기 해제) ===
+  // currentPurchase 처리(=finish 완료 시 최종 성공 송신)
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    const p = latestPurchase;
+    const p = currentPurchase;
     if (!p) return;
 
-    try {
-      console.log('[IAP][latestPurchase] raw =', JSON.stringify(p, null, 2));
-    } catch {
-      console.log('[IAP][latestPurchase] <unserializable>', String(p && p.productId));
-    }
+    try { console.log('[IAP][currentPurchase] raw =', JSON.stringify(p, null, 2)); }
+    catch { console.log('[IAP][currentPurchase] <unserializable>'); }
 
     const { productId, transactionId } = p;
     if (transactionId && finishedTxnIdsRef.current.has(transactionId)) {
@@ -881,19 +813,17 @@ const App = () => {
 
     (async () => {
       const isConsumable = productId === IOS_INAPP_BASIC;
-
       try {
         console.log('[IAP] finishTransaction.begin', JSON.stringify({ productId, transactionId, isConsumable }));
         await finishTransaction({ purchase: p, isConsumable });
         console.log('[IAP] finishTransaction.done', JSON.stringify({ productId, transactionId, isConsumable }));
-
         if (transactionId) finishedTxnIdsRef.current.add(transactionId);
 
         const payload = isConsumable
           ? { success: true, platform: 'ios', one_time: true, product_id: productId, transaction_id: transactionId || null }
           : { success: true, platform: 'ios', product_id: productId || '', transaction_id: transactionId || null };
 
-        // 최종 성공은 여기(=finish 성공)에서만 송신
+        // 최종 성공은 여기서만
         sendIapToWeb(isConsumable ? 'PURCHASE_RESULT' : 'SUBSCRIPTION_RESULT', payload);
         notifyIapResult(payload);
         endIap();
@@ -928,28 +858,28 @@ const App = () => {
         endIap();
       }
     })();
-  }, [latestPurchase, finishTransaction, notifyIapResult, sendIapToWeb, endIap]);
+  }, [currentPurchase, finishTransaction, notifyIapResult, sendIapToWeb, endIap]);
 
-  // === iapError (실패/취소/이미 보유) — 종류에 맞춰 전송 + 대기 해제 ===
+  // 구매 에러 이펙트
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
-    if (!iapError) return;
+    if (!currentPurchaseError) return;
 
-    console.log('[IAP][error.effect]', iapError?.code, String(iapError?.message || iapError), 'kind=', iapKindRef.current, 'sku=', iapSkuRef.current);
+    console.log('[IAP][error.effect]', currentPurchaseError?.code, String(currentPurchaseError?.message || currentPurchaseError), 'kind=', iapKindRef.current, 'sku=', iapSkuRef.current);
 
     const payload = {
       success: false,
       platform: 'ios',
       product_id: iapSkuRef.current || '',
-      error_code: iapError?.code || 'purchase_error',
-      message: iapError?.message || String(iapError),
-      cancelled: String(iapError?.code || '').toLowerCase().includes('cancel'),
+      error_code: currentPurchaseError?.code || 'purchase_error',
+      message: currentPurchaseError?.message || String(currentPurchaseError),
+      cancelled: String(currentPurchaseError?.code || '').toLowerCase().includes('cancel'),
     };
     const type = (iapKindRef.current === 'inapp') ? 'PURCHASE_RESULT' : 'SUBSCRIPTION_RESULT';
     sendIapToWeb(type, payload);
     notifyIapResult(payload);
     endIap();
-  }, [iapError, notifyIapResult, sendIapToWeb, endIap]);
+  }, [currentPurchaseError, notifyIapResult, sendIapToWeb, endIap]);
 
   // ─────────── onMessageFromWeb ───────────
   const onMessageFromWeb = useCallback(async (e) => {
@@ -1037,13 +967,7 @@ const App = () => {
             await fetchProducts({ skus: [sku], type: 'subs' });
             await requestPurchase({ type: 'subs', request: { ios: { sku } } });
           } catch (e) {
-            const fail = {
-              success: false,
-              platform: 'ios',
-              product_id: sku,
-              error_code: e?.code || 'start_failed',
-              message: String(e?.message || e),
-            };
+            const fail = { success: false, platform: 'ios', product_id: sku, error_code: e?.code || 'start_failed', message: String(e?.message || e) };
             sendIapToWeb('SUBSCRIPTION_RESULT', fail);
             notifyIapResult(fail);
             endIap();
@@ -1055,18 +979,23 @@ const App = () => {
             for (let i = 0; i < 30; i++) {
               const snap = await probeLatestBySnapshot(sku);
               if (snap && snap.transactionId) {
-                // 폴링 성공 → 확정 성공을 바로 보내지 말고, restore로 latestPurchase를 강제 흘려보낸다.
                 try { await restorePurchases(); } catch { }
-                // 선택: 중간 상태 알림
                 sendIapToWeb('SUBSCRIPTION_PENDING_FINISH', { product_id: snap.productId, transaction_id: snap.transactionId, at: Date.now() });
-                return { success: true, platform: 'ios', product_id: snap.productId, transaction_id: snap.transactionId };
+                return null; // 최종 성공은 currentPurchase 이펙트에서 처리
               }
               await new Promise(r => setTimeout(r, 1000));
             }
-            return null;
+            return { success: false, platform: 'ios', product_id: sku, error_code: 'timeout', message: 'iap_result_timeout' };
           })();
-          // race 결과는 참고용. 최종 확정 전송은 latestPurchase 이펙트에서만 이뤄진다.
-          await Promise.race([raceWait, racePoll]);
+
+          {
+            const res = await Promise.race([raceWait, racePoll]);
+            if (res && res.success === false) {
+              sendIapToWeb('SUBSCRIPTION_RESULT', res);
+              notifyIapResult(res);
+              endIap();
+            }
+          }
           break;
         }
 
@@ -1082,35 +1011,35 @@ const App = () => {
             await fetchProducts({ skus: [sku], type: 'inapp' });
             await requestPurchase({ type: 'inapp', request: { ios: { sku } } });
           } catch (e) {
-            const fail = {
-              success: false,
-              platform: 'ios',
-              one_time: true,
-              product_id: sku,
-              error_code: e?.code || 'start_failed',
-              message: String(e?.message || e),
-            };
+            const fail = { success: false, platform: 'ios', one_time: true, product_id: sku, error_code: e?.code || 'start_failed', message: String(e?.message || e) };
             sendIapToWeb('PURCHASE_RESULT', fail);
             notifyIapResult(fail);
             endIap();
             break;
           }
+
           const raceWait = waitIapResult(30000);
           const racePoll = (async () => {
             for (let i = 0; i < 30; i++) {
               const snap = await probeLatestBySnapshot(sku);
               if (snap && snap.transactionId) {
-                // 폴링 성공 시 즉시 확정 전송 금지 → restore로 latestPurchase 발생 유도
                 try { await restorePurchases(); } catch { }
-                // 선택: 중간 상태 알림
                 sendIapToWeb('PURCHASE_PENDING_FINISH', { one_time: true, product_id: snap.productId, transaction_id: snap.transactionId, at: Date.now() });
-                return { success: true, platform: 'ios', one_time: true, product_id: snap.productId, transaction_id: snap.transactionId };
+                return null; // 최종 성공은 currentPurchase 이펙트에서 처리
               }
               await new Promise(r => setTimeout(r, 1000));
             }
-            return null;
+            return { success: false, platform: 'ios', one_time: true, product_id: sku, error_code: 'timeout', message: 'iap_result_timeout' };
           })();
-          await Promise.race([raceWait, racePoll]);
+
+          {
+            const res = await Promise.race([raceWait, racePoll]);
+            if (res && res.success === false) {
+              sendIapToWeb('PURCHASE_RESULT', res);
+              notifyIapResult(res);
+              endIap();
+            }
+          }
           break;
         }
 
@@ -1269,7 +1198,7 @@ const App = () => {
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <WebView
           ref={webViewRef}
-          source={{ uri: 'http://www.wizmarket.ai/ads/start' }} // 가능하면 https
+          source={{ uri: 'http://www.wizmarket.ai/ads/start' }} // 가능하면 HTTPS로
           onMessage={onMessageFromWeb}
           onLoadStart={onWebViewLoadStart}
           onLoadProgress={({ nativeEvent }) => {
