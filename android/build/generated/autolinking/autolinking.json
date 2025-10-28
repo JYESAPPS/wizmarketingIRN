@@ -1,25 +1,25 @@
 {
-  "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN",
-  "reactNativePath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native",
+  "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN",
+  "reactNativePath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native",
   "reactNativeVersion": "0.81",
   "dependencies": {
     "@invertase/react-native-apple-authentication": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication",
       "name": "@invertase/react-native-apple-authentication",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/RNAppleAuthentication.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/RNAppleAuthentication.podspec",
           "version": "2.4.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/android",
           "packageImportPath": "import com.RNAppleAuthentication.AppleAuthenticationAndroidPackage;",
           "packageInstance": "new AppleAuthenticationAndroidPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@invertase/react-native-apple-authentication/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -28,22 +28,22 @@
       }
     },
     "@notifee/react-native": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@notifee/react-native",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@notifee/react-native",
       "name": "@notifee/react-native",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@notifee/react-native/RNNotifee.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@notifee/react-native/RNNotifee.podspec",
           "version": "9.1.8",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@notifee/react-native/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@notifee/react-native/android",
           "packageImportPath": "import io.invertase.notifee.NotifeePackage;",
           "packageInstance": "new NotifeePackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@notifee/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@notifee/react-native/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -52,23 +52,23 @@
       }
     },
     "@react-native-async-storage/async-storage": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage",
       "name": "@react-native-async-storage/async-storage",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/RNCAsyncStorage.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/RNCAsyncStorage.podspec",
           "version": "1.24.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/android",
           "packageImportPath": "import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;",
           "packageInstance": "new AsyncStoragePackage()",
           "buildTypes": [],
           "libraryName": "rnasyncstorage",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -77,23 +77,23 @@
       }
     },
     "@react-native-camera-roll/camera-roll": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll",
       "name": "@react-native-camera-roll/camera-roll",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/react-native-cameraroll.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/react-native-cameraroll.podspec",
           "version": "7.10.2",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/android",
           "packageImportPath": "import com.reactnativecommunity.cameraroll.CameraRollPackage;",
           "packageInstance": "new CameraRollPackage()",
           "buildTypes": [],
           "libraryName": "rncameraroll",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -102,23 +102,23 @@
       }
     },
     "@react-native-clipboard/clipboard": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard",
       "name": "@react-native-clipboard/clipboard",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/RNCClipboard.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/RNCClipboard.podspec",
           "version": "1.16.3",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/android",
           "packageImportPath": "import com.reactnativecommunity.clipboard.ClipboardPackage;",
           "packageInstance": "new ClipboardPackage()",
           "buildTypes": [],
           "libraryName": "rnclipboard",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-clipboard/clipboard/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -127,12 +127,12 @@
       }
     },
     "@react-native-firebase/app": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/app",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/app",
       "name": "@react-native-firebase/app",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/app/RNFBApp.podspec",
-          "version": "23.3.1",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/app/RNFBApp.podspec",
+          "version": "23.4.0",
           "configurations": [],
           "scriptPhases": [
             {
@@ -146,12 +146,12 @@
           ]
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/app/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/app/android",
           "packageImportPath": "import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;",
           "packageInstance": "new ReactNativeFirebaseAppPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -160,22 +160,22 @@
       }
     },
     "@react-native-firebase/auth": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/auth",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/auth",
       "name": "@react-native-firebase/auth",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/auth/RNFBAuth.podspec",
-          "version": "23.3.1",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/auth/RNFBAuth.podspec",
+          "version": "23.4.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/auth/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/auth/android",
           "packageImportPath": "import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;",
           "packageInstance": "new ReactNativeFirebaseAuthPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/auth/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/auth/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -184,22 +184,22 @@
       }
     },
     "@react-native-firebase/messaging": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/messaging",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/messaging",
       "name": "@react-native-firebase/messaging",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/messaging/RNFBMessaging.podspec",
-          "version": "23.3.1",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/messaging/RNFBMessaging.podspec",
+          "version": "23.4.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/messaging/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/messaging/android",
           "packageImportPath": "import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;",
           "packageInstance": "new ReactNativeFirebaseMessagingPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -208,17 +208,17 @@
       }
     },
     "@react-native-google-signin/google-signin": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin",
       "name": "@react-native-google-signin/google-signin",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/RNGoogleSignin.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/RNGoogleSignin.podspec",
           "version": "16.0.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/android",
           "packageImportPath": "import com.reactnativegooglesignin.RNGoogleSigninPackage;",
           "packageInstance": "new RNGoogleSigninPackage()",
           "buildTypes": [],
@@ -226,7 +226,7 @@
           "componentDescriptors": [
             "RNGoogleSigninButtonComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -235,22 +235,22 @@
       }
     },
     "@react-native-seoul/kakao-login": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login",
       "name": "@react-native-seoul/kakao-login",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/kakao-login.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/kakao-login.podspec",
           "version": "5.4.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/android",
           "packageImportPath": "import com.dooboolab.kakaologins.RNKakaoLoginsPackage;",
           "packageInstance": "new RNKakaoLoginsPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/@react-native-seoul/kakao-login/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -259,22 +259,46 @@
       }
     },
     "react-native-fs": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-fs",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-fs",
       "name": "react-native-fs",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-fs/RNFS.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-fs/RNFS.podspec",
           "version": "2.20.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-fs/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-fs/android",
           "packageImportPath": "import com.rnfs.RNFSPackage;",
           "packageInstance": "new RNFSPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-fs/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-fs/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-iap": {
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-iap",
+      "name": "react-native-iap",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-iap/NitroIap.podspec",
+          "version": "14.4.9",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-iap/android",
+          "packageImportPath": "import com.margelo.nitro.iap.NitroIapPackage;",
+          "packageInstance": "new NitroIapPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-iap/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -283,22 +307,47 @@
       }
     },
     "react-native-image-resizer": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-image-resizer",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-image-resizer",
       "name": "react-native-image-resizer",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-image-resizer/react-native-image-resizer.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-image-resizer/react-native-image-resizer.podspec",
           "version": "1.4.5",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-image-resizer/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-image-resizer/android",
           "packageImportPath": "import fr.bamlab.rnimageresizer.ImageResizerPackage;",
           "packageInstance": "new ImageResizerPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-image-resizer/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-image-resizer/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-nitro-modules": {
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-nitro-modules",
+      "name": "react-native-nitro-modules",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-nitro-modules/NitroModules.podspec",
+          "version": "0.29.8",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-nitro-modules/android",
+          "packageImportPath": "import com.margelo.nitro.NitroModulesPackage;",
+          "packageInstance": "new NitroModulesPackage()",
+          "buildTypes": [],
+          "libraryName": "NitroModulesSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -307,22 +356,22 @@
       }
     },
     "react-native-randombytes": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-randombytes",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-randombytes",
       "name": "react-native-randombytes",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-randombytes/react-native-randombytes.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-randombytes/react-native-randombytes.podspec",
           "version": "3.6.2",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-randombytes/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-randombytes/android",
           "packageImportPath": "import com.bitgo.randombytes.RandomBytesPackage;",
           "packageInstance": "new RandomBytesPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-randombytes/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-randombytes/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -331,17 +380,17 @@
       }
     },
     "react-native-safe-area-context": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-safe-area-context",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-safe-area-context",
       "name": "react-native-safe-area-context",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
           "version": "5.6.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-safe-area-context/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-safe-area-context/android",
           "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
           "packageInstance": "new SafeAreaContextPackage()",
           "buildTypes": [],
@@ -350,7 +399,7 @@
             "RNCSafeAreaProviderComponentDescriptor",
             "RNCSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -359,23 +408,23 @@
       }
     },
     "react-native-share": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-share",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-share",
       "name": "react-native-share",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-share/RNShare.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-share/RNShare.podspec",
           "version": "12.2.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-share/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-share/android",
           "packageImportPath": "import cl.json.RNSharePackage;",
           "packageInstance": "new RNSharePackage()",
           "buildTypes": [],
           "libraryName": "RNShareSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-share/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -384,17 +433,17 @@
       }
     },
     "react-native-webview": {
-      "root": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-webview",
+      "root": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-webview",
       "name": "react-native-webview",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-webview/react-native-webview.podspec",
+          "podspecPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-webview/react-native-webview.podspec",
           "version": "13.16.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-webview/android",
+          "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-webview/android",
           "packageImportPath": "import com.reactnativecommunity.webview.RNCWebViewPackage;",
           "packageInstance": "new RNCWebViewPackage()",
           "buildTypes": [],
@@ -402,7 +451,7 @@
           "componentDescriptors": [
             "RNCWebViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -412,6 +461,14 @@
     }
   },
   "commands": [
+    {
+      "description": "fully automated project state clean: like a freshly-cloned, never-started repo",
+      "name": "clean-project-auto"
+    },
+    {
+      "description": "interactive project state clean: choose types of react-native state to clean",
+      "name": "clean-project"
+    },
     {
       "name": "bundle",
       "description": "Build the bundle for the provided JavaScript entry file.",
@@ -573,7 +630,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN"
+          "default": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN"
         },
         {
           "name": "--platform <string>",
@@ -871,7 +928,7 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/ios",
+      "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/ios",
       "xcodeProject": {
         "name": "wizmarketingIRN.xcworkspace",
         "path": ".",
@@ -880,7 +937,7 @@
       "assets": []
     },
     "android": {
-      "sourceDir": "/Users/sungwon/Downloads/Develop/Mobile/wizmarketingIRN/android",
+      "sourceDir": "/Users/sungwon/Downloads/Develop/wizmarket_app/wizmarketingIRN/android",
       "appName": "app",
       "packageName": "com.wizmarketingirn",
       "applicationId": "com.wizmarketingirn",
